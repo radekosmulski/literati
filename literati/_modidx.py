@@ -13,4 +13,5 @@ d = { 'settings': { 'branch': 'main',
                                'literati.core.MarkdownHandler.process_markdown': ( 'core.html#markdownhandler.process_markdown',
                                                                                    'literati/core.py'),
                                'literati.core.MarkdownHandler.should_process': ( 'core.html#markdownhandler.should_process',
-                                                                                 'literati/core.py')}}}
+                                                                                 'literati/core.py'),
+                               'literati.core.literati': ('core.html#literati', 'literati/core.py')}}}
