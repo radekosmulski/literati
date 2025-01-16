@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "literati"
+  site-url: "https://radekosmulski.github.io/literati"
+  description: "Code files you and your LLM can read and your computer can run."
+  repo-branch: main
+  repo-url: "https://github.com/radekosmulski/literati"
