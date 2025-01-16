@@ -12,9 +12,10 @@ Run `literati`. Create a `<file_name>.md` with your favorite editor.
 
 Write code interwoven with markdown:
 
+    Accessing the mainframe to compile some yarn.
     ```python
     def hello():
-        print("Hello, World!")
+        print("G'day, World!!")
     ```
 
 Whenever you save your file, `literati` transcribes your file to
