@@ -16,7 +16,7 @@ Create a `<file_name>.md` with your favorite editor.
 Write code interwoven with markdown:
 
     # Time for some fair dinkum mischief...
-    Accessing the mainframe to compile some yarn.
+    Accessing the mainframe to _compile some yarn_.
     ```python
     def hello():
         print("G'day, World!!")
