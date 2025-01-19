@@ -9,6 +9,8 @@ combines prose with code in a markdown file.
 
 ## Usage
 
+### File Watching Mode
+
 Run
 [`literati`](https://radekosmulski.github.io/literati/core.html#literati).
 Create a `<file_name>.md` with your favorite editor.
@@ -29,11 +31,27 @@ Only the code remains.
 
 Run `python py/<file_name>.py` to run your code.
 
+### One-time Conversion
+
+If you just want to convert markdown files without watching for changes,
+use
+[`md_to_py`](https://radekosmulski.github.io/literati/core.html#md_to_py):
+
+Copy \$ md_to_py input_directory output_directory
+
+This will process all markdown files in `input_directory` and save the
+extracted code to Python files in `output_directory`.
+
 ### Options
 
-- `literati --path /custom/path` - Monitor a different directory
-- `literati --output-dir custom_output` - Use a different output
-  directory
+File Watching: - `literati --path /custom/path` - Monitor a different
+directory - `literati --output-dir custom_output` - Use a different
+output directory
+
+One-time Conversion: - `md_to_py --input-dir /path/to/markdown` -
+Directory containing markdown files -
+`md_to_py --output-dir custom_output` - Directory for output Python
+files (defaults to ‘py’)
 
 ## The Why
 

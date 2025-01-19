@@ -16,6 +16,11 @@ import threading
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
+from tempfile import NamedTemporaryFile
+from tempfile import TemporaryDirectory
+import signal
+import subprocess
+
 
 class MarkdownProcessor:
     """Handles the processing of markdown files to extract code blocks"""
