@@ -1,0 +1,82 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "literati",
+    "section": "",
+    "text": "Jupyter notebook combines prose with code in a notebook. literati combines prose with code in a markdown file.",
+    "crumbs": [
+      "literati"
+    ]
+  },
+  {
+    "objectID": "index.html#usage",
+    "href": "index.html#usage",
+    "title": "literati",
+    "section": "Usage",
+    "text": "Usage\n\nFile Watching Mode\nRun literati. Create a &lt;file_name&gt;.md with your favorite editor.\nWrite code interwoven with markdown:\n&gt; Time for some fair dinkum mischief...\nAccessing the mainframe to _compile some yarn_.\n```python\ndef hello():\n    print(\"G'day, World!!\")\n```\nWhenever you save your file, literati transcribes your file to py/&lt;file_name&gt;.py stripping all the markdown. Only the code remains.\nRun python py/&lt;file_name&gt;.py to run your code.\n\n\nOne-time Conversion\nIf you just want to convert markdown files without watching for changes, use md_to_py:\nCopy $ md_to_py input_directory output_directory\nThis will process all markdown files in input_directory and save the extracted code to Python files in output_directory.\n\n\nOptions\nFile Watching: - literati --path /custom/path - Monitor a different directory - literati --output-dir custom_output - Use a different output directory\nOne-time Conversion: - md_to_py --input-dir /path/to/markdown - Directory containing markdown files - md_to_py --output-dir custom_output - Directory for output Python files (defaults to ‘py’)",
+    "crumbs": [
+      "literati"
+    ]
+  },
+  {
+    "objectID": "index.html#the-why",
+    "href": "index.html#the-why",
+    "title": "literati",
+    "section": "The Why",
+    "text": "The Why\nI wanted to try the following pattern of working with LLMs:\n\ncontext is your code\nwhen you want to make changes or additions, provide the context to your LLM\nask for modifications\nupdate the context to reflect the new information\n\nContext and code, always in sync. For you and your LLM.",
+    "crumbs": [
+      "literati"
+    ]
+  },
+  {
+    "objectID": "index.html#installation",
+    "href": "index.html#installation",
+    "title": "literati",
+    "section": "Installation",
+    "text": "Installation\nInstall latest from the GitHub repository:\n$ pip install git+https://github.com/radekosmulski/literati.git\nor from pypi\n$ pip install literati\n\nInstall literati in Development mode\n# make sure literati package is installed in development mode\n$ pip install -e .\n\n# make changes under nbs/ directory\n# ...\n\n# compile to have changes apply to literati\n$ nbdev_prepare",
+    "crumbs": [
+      "literati"
+    ]
+  },
+  {
+    "objectID": "core.html",
+    "href": "core.html",
+    "title": "Core",
+    "section": "",
+    "text": "source\n\n\n\n MarkdownProcessor (output_dir='py')\n\nHandles the processing of markdown files to extract code blocks\n\nmp = MarkdownProcessor()\n\n# Test single backtick\ntest_str = \"Some text `print('hello')`\"\ntest_eq(mp.extract_code(test_str), \"print('hello')\")\n\n\n# Test triple backtick\ntest_str = \"\"\"Some text\n```\ndef hello():\n    print('world')\n```\nmore text\"\"\"\nprint(test_str)\n\nSome text\n```\ndef hello():\n    print('world')\n```\nmore text\n\n\n\nexpected = \"def hello():\\n    print('world')\\n\"\nprint(expected)\n\ndef hello():\n    print('world')\n\n\n\n\ntest_eq(mp.extract_code(test_str), expected)\n\n\n# Test multiple code blocks\ntest_str = \"\"\"```python\ndef hello():\n    print('world')\n```\nSome text\n```\ndef goodbye():\n    print('bye')\n```\"\"\"\nexpected = \"def hello():\\n    print('world')\\n\\ndef goodbye():\\n    print('bye')\\n\"\n\ntest_eq(mp.extract_code(test_str), expected)\n\n\ntest_eq(mp.should_process(Path('test.md')), True)\ntest_eq(mp.should_process(Path('test.py')), False)\ntest_eq(mp.should_process(Path('test/test.md')), True)\n\ntest_eq(mp.should_process(Path('README.md')), False)\ntest_eq(mp.should_process(Path('readme.md')), False)\ntest_eq(mp.should_process(Path('ReadMe.md')), False)\n\nLet’s check that we are writing the file to disk as expected.\n\nwith TemporaryDirectory() as tmp:\n    # Setup temporary directories\n    tmpdir = Path(tmp)\n    out_dir = tmpdir/'py'\n    \n    # Create test markdown file\n    md_path = tmpdir/'test.md'\n    md_path.write_text(test_str)\n    \n    # Process the file\n    mp = MarkdownProcessor(output_dir=out_dir)\n    mp.process_file(md_path)\n    \n    # Check results\n    out_file = out_dir/'test.py'\n    test_eq(out_file.exists(), True)\n    test_eq(out_file.read_text(), expected)\n\nLet’s see if we can process an entire directory as expected.\n\nwith TemporaryDirectory() as tmpdir:\n    tmpdir = Path(tmpdir)\n\n    (tmpdir/'test1.md').write_text(test_str)\n    (tmpdir/'README.md').write_text('# Readme\\n' + test_str)\n\n    mp = MarkdownProcessor(output_dir=tmpdir/'py')\n    processed = mp.process_directory(tmpdir)\n    \n    # Verify results\n    test_eq(len(processed), 1)  # Should process 1 file (excluding README.md)\n    test_eq((tmpdir/'py'/'test1.py').exists(), True)\n    \n    # Check content of processed files\n    test_eq((tmpdir/'py'/'test1.py').read_text(), expected)",
+    "crumbs": [
+      "Core"
+    ]
+  },
+  {
+    "objectID": "core.html#markdownprocessor",
+    "href": "core.html#markdownprocessor",
+    "title": "Core",
+    "section": "",
+    "text": "source\n\n\n\n MarkdownProcessor (output_dir='py')\n\nHandles the processing of markdown files to extract code blocks\n\nmp = MarkdownProcessor()\n\n# Test single backtick\ntest_str = \"Some text `print('hello')`\"\ntest_eq(mp.extract_code(test_str), \"print('hello')\")\n\n\n# Test triple backtick\ntest_str = \"\"\"Some text\n```\ndef hello():\n    print('world')\n```\nmore text\"\"\"\nprint(test_str)\n\nSome text\n```\ndef hello():\n    print('world')\n```\nmore text\n\n\n\nexpected = \"def hello():\\n    print('world')\\n\"\nprint(expected)\n\ndef hello():\n    print('world')\n\n\n\n\ntest_eq(mp.extract_code(test_str), expected)\n\n\n# Test multiple code blocks\ntest_str = \"\"\"```python\ndef hello():\n    print('world')\n```\nSome text\n```\ndef goodbye():\n    print('bye')\n```\"\"\"\nexpected = \"def hello():\\n    print('world')\\n\\ndef goodbye():\\n    print('bye')\\n\"\n\ntest_eq(mp.extract_code(test_str), expected)\n\n\ntest_eq(mp.should_process(Path('test.md')), True)\ntest_eq(mp.should_process(Path('test.py')), False)\ntest_eq(mp.should_process(Path('test/test.md')), True)\n\ntest_eq(mp.should_process(Path('README.md')), False)\ntest_eq(mp.should_process(Path('readme.md')), False)\ntest_eq(mp.should_process(Path('ReadMe.md')), False)\n\nLet’s check that we are writing the file to disk as expected.\n\nwith TemporaryDirectory() as tmp:\n    # Setup temporary directories\n    tmpdir = Path(tmp)\n    out_dir = tmpdir/'py'\n    \n    # Create test markdown file\n    md_path = tmpdir/'test.md'\n    md_path.write_text(test_str)\n    \n    # Process the file\n    mp = MarkdownProcessor(output_dir=out_dir)\n    mp.process_file(md_path)\n    \n    # Check results\n    out_file = out_dir/'test.py'\n    test_eq(out_file.exists(), True)\n    test_eq(out_file.read_text(), expected)\n\nLet’s see if we can process an entire directory as expected.\n\nwith TemporaryDirectory() as tmpdir:\n    tmpdir = Path(tmpdir)\n\n    (tmpdir/'test1.md').write_text(test_str)\n    (tmpdir/'README.md').write_text('# Readme\\n' + test_str)\n\n    mp = MarkdownProcessor(output_dir=tmpdir/'py')\n    processed = mp.process_directory(tmpdir)\n    \n    # Verify results\n    test_eq(len(processed), 1)  # Should process 1 file (excluding README.md)\n    test_eq((tmpdir/'py'/'test1.py').exists(), True)\n    \n    # Check content of processed files\n    test_eq((tmpdir/'py'/'test1.py').read_text(), expected)",
+    "crumbs": [
+      "Core"
+    ]
+  },
+  {
+    "objectID": "core.html#markdownwatcher",
+    "href": "core.html#markdownwatcher",
+    "title": "Core",
+    "section": "MarkdownWatcher",
+    "text": "MarkdownWatcher\n\nsource\n\nMarkdownWatcher\n\n MarkdownWatcher (processor)\n\nWatches for markdown file changes and triggers processing\nNow let’s test the markdown watcher, with the file created before and while the watcher is running.\n\n# Setup\ninput_dir = Path('input_dir')\ninput_dir.mkdir(exist_ok=True)\noutput_dir = Path('output_py')\n\ntest_before = Path(input_dir / 'test_before.md')\ntest_before.write_text(test_str)\n\nprocessor = MarkdownProcessor(output_dir=output_dir)\nhandler = MarkdownWatcher(processor)\n\nobserver = Observer()\nobserver.schedule(handler, str(input_dir), recursive=False)\nobserver.start()\n\ntest_while = Path(input_dir / 'test_while.md')\ntest_while.write_text(test_str)\n\n# Give it a moment to process\n# By giving it a relatively long time -- 5 seconds! -- we are preventing any intermittent, false failures\ntime.sleep(5)\n\n# Test and clean up\nfor stem in ['test_before', 'test_while']:\n    output_path = output_dir / f'{stem}.py'\n    test_eq(output_path.exists(), True)\n    output_path.unlink()\noutput_dir.rmdir()\n\nobserver.stop()\nobserver.join()\n\ntest_before.unlink()\ntest_while.unlink()\ninput_dir.rmdir()",
+    "crumbs": [
+      "Core"
+    ]
+  },
+  {
+    "objectID": "core.html#cli-commands",
+    "href": "core.html#cli-commands",
+    "title": "Core",
+    "section": "CLI commands",
+    "text": "CLI commands\n\nsource\n\nmd_to_py\n\n md_to_py (input_dir:str&lt;Inputdirectorycontainingmarkdownfiles&gt;,\n           output_dir:str&lt;OutputdirectoryforPythonfiles&gt;='py')\n\nConvert markdown files in input_dir to Python files in output_dir\n\nsource\n\n\nliterati\n\n literati (path:str&lt;Directorytomonitor&gt;='.',\n           output_dir:str&lt;OutputdirectoryforPythonfiles&gt;='py')\n\nMonitor markdown files and extract code blocks to Python files\nWe can easily test the md_to_py however I haven’t found a good way how to test iterati. Falling back to manual testing.\n\nwith TemporaryDirectory() as tmpdir:\n    # Setup\n    tmpdir = Path(tmpdir)\n    (tmpdir/'test.md').write_text(test_str)\n\n    # Test md_to_py command\n    try:\n        md_to_py(str(tmpdir), str(tmpdir/'py'))\n        test_eq((tmpdir/'py'/'test.py').exists(), True)\n        test_eq((tmpdir/'py'/'test.py').read_text(), expected)\n    except Exception as e:\n        assert False, f\"md_to_py raised an exception: {e}\"\n\nProcessed 1 files:\n  /var/folders/wt/jbbs6xs16r32mfmphb089_2h0000gn/T/tmpvk0tnpe1/py/test.py\n\n\n\n# manual solution to testing iterati, uncomment the code for running and terminate using `interrupt kernel`\n# make sure to comment it back out before commiting to the library!\n\n# !rm -rf py\n# Path('test.md').write_text(test_str)\n# literati()\n# test_eq(Path('py/test.py').read_text(), expected)\n# !ls py\n# !rm -rf py",
+    "crumbs": [
+      "Core"
+    ]
+  }
+]
